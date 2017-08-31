@@ -156,9 +156,9 @@ Create the table to be consistant with the information below:
 
 
 |               | Date   | Difficulty  | Distance  |  Time  | Pace | Notes
-| ------------- |:------:| -----------:|
+| ------------- |:------:| -----------:| -----------:|-----------:|-----------:|-----------:|
 | user submits:     | yes   | yes | yes | yes | no | yes
-| user receives?    | yes   | yes | yes | yes | yes | yes
+| user receives:    | yes   | yes | yes | yes | yes | yes
 | data type     | date   | integer | float | time | time | text
 
 Briefly, how did you approach this problem and create the table?  Did you generate code using the command line?  If so, copy and past the copy in the space below:
