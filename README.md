@@ -74,7 +74,7 @@ After you write a curl request using the examples provided in "script" folder, y
 
 **All curl requests will require that a user be signed-in and have a valid token.  As a result, you must make sure that you include a token in every curl request**
 
-To Create:
+### To Create:
 
 Create Example 1
 ```bash
@@ -106,7 +106,7 @@ TOKEN=BAhJIiU2YzNjOGY3MGI1MGNkZTQ0OWE2NDRkNzUyYmZhYjNjZgY6BkVG--9ac321a2b3d104cf
 ```
 Output => {"example":{"id":1,"text":"Text One Updated","bool":true,"editable":true}}
 
-### Format for Answering Questions
+# Format for Answering Questions
 
 Below is a list of tasks that will need to be completed.  After you complete a given task, you will need to do the following:
 
