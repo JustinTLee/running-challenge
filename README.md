@@ -137,7 +137,7 @@ Below is a list of tasks that will need to be completed.  After you complete a g
 
 Assume we are making an app that keeps track of our runs for the marathon.
 
-We want the user to monitor the following information about his or her daily training runs.  The user wants to be able to **input** the following information:
+We want the user to monitor the following information about his or her daily training runs.  The user wants to be able to store the following information:
 
 1. Date of the Run
 1. Difficulty (on a scale of 1 to 10)
