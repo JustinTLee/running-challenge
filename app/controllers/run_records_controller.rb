@@ -47,6 +47,13 @@ class RunRecordsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def run_record_params
+      if params[:run_record].values_at(:pace) != [""] and (params[:run_record].has_key?(:pace) == true)
+        ActionController::Parameters.action_on_unpermitted_parameters = :raise
+      else
+        ActionController::Parameters.action_on_unpermitted_parameters = :log
+      end
+
+      params[:run_record].require([:date, :difficulty, :distance, :time])
       params.require(:run_record).permit(:user_id, :date, :difficulty, :distance, :time, :notes)
     end
 end

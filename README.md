@@ -252,6 +252,65 @@ Briefly, how did you approach this problem and create the table?  Did you genera
 
 **---Your Answer Start---**
 
+I added the following section to the `run_record_params` method in `run_records_controller.rb` to reject `pace`:
+
+  ```ruby
+  if params[:run_record].values_at(:pace) != [""] and (params[:run_record].has_key?(:pace) == true)
+    ActionController::Parameters.action_on_unpermitted_parameters = :raise
+  else
+    ActionController::Parameters.action_on_unpermitted_parameters = :log
+  end
+  ```
+
+This will cause an exception to be raised if `pace` is non-empty, and no exception to be raised if either `pace` is left blank (has value of `[""]`) or `pace` was not included in the curl script (has value of `[nil]`).
+
+The following code requires date, difficulty, distance, and time:
+
+  ```ruby
+  params[:run_record].require([:date, :difficulty, :distance, :time]) #requires :date, :difficulty, :distance, :time to be as an embedded hash in :run_record
+  params.require(:run_record).permit(:date, :difficulty, :distance, :time, :notes) #permits the preceding required parameters to be a part of the :run_record object
+  ```
+
+The problem with adding `:distance` or `:time` to the model is that the parameters are processed in the model after the controller. If :pace is calculated in the controller and `:time` is missing, then Ruby will throw an error because `:distance` is being divided by a `nil` value. Therefore, `:time` at least needs to validated in the controller stage.
+
+Now, if either pace is non-empty or any of the required fields are missing, an error is raised to the development environment. For example, an error will return if:
+
+  ```bash
+  set PACE=20
+  ```
+
+but an error will not return if:
+
+  ```bash
+  set PACE=
+  ```
+
+or if we change the curl script `create-run_record.sh` to be:
+
+  ```bash
+  #!/bin/bash
+
+  API="${API_ORIGIN:-http://localhost:4741}"
+  URL_PATH="/run_records"
+  curl "${API}${URL_PATH}" \
+    --include \
+    --request POST \
+    --header "Content-Type: application/json" \
+    --header "Authorization: Token token=$TOKEN" \
+    --data '{
+      "run_record": {
+        "user_id": "'"${USER}"'",
+        "date": "'"${DATE}"'",
+        "difficulty": "'"${DIFFICULTY}"'",
+        "distance": "'"${DISTANCE}"'",
+        "time": "'"${TIME}"'",
+        "notes": "'"${NOTES}"'"
+      }
+    }'
+
+  echo
+  ```
+
 **---Your Answer End---**
 
 **--------------------------------------------------**
