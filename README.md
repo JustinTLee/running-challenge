@@ -322,6 +322,37 @@ Next, we need to add a validation to the existing table.  Create a validation fo
 
 **---Your Answer Start---**
 
+Going into the `run_record.rb` model, I added the following lines of code:
+
+  ```ruby
+  validates :difficulty, inclusion: { in: 1..10 }, numericality: { only_integer: true }
+  validates_each :date do |record, attr, value|
+    record.errors.add(attr, 'date must be before today or today') if value > Date.today
+  end
+  ```
+
+The line `validates :difficulty, inclusion: { in: 1..10 }, numericality: { only_integer: true }` ensures that `:difficulty` is both an integer and within the range of 1-10. The `numericality` portion is a bit redunant because the difficulty input was already scaffolded as a variable and transferred to the database in the migration as an integer. This was just something I added so that I can learn and test out all the different options to validate a model.
+
+The following lines:
+
+  ```ruby
+  validates_each :date do |record, attr, value|
+    record.errors.add(attr, 'date must be before today or today') if value > Date.today
+  end
+  ```
+
+ensure that the value of `:date` is not equal to today. It breaks `:date` down into three components: its record, its attributes, and its value. I only need to compare the value to the Ruby generated `Date.today` object. I tried many different ways and this was the only way that worked. If you can let me know if a better way to do this, I appreciate it.
+
+To test this, I changed:
+
+  ```bash
+  set DATE=2018-01-01
+  set DIFFICULTY=20
+  ```
+
+And ran the `scripts/create-run_record.rb` script. Both inputs generate errors as expected. Both inputs set to appropriate values allow a record to pass, as expected.
+
+
 **---Your Answer End---**
 
 **--------------------------------------------------**
