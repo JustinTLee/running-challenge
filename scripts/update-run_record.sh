@@ -10,7 +10,8 @@ curl "${API}${URL_PATH}/${ID}" \
   --data '{
     "run_record": {
       "distance": "'"${DISTANCE}"'",
-      "time": "'"${TIME}"'"
+      "time": "'"${TIME}"'",
+      "finished": "'"${FINISHED}"'"
     }
   }'
 

@@ -4,13 +4,15 @@ class RunRecordsController < ApplicationController
   # GET /run_records
   def index
     @run_records = RunRecord.all
+    @run_records = @run_records.where(:finished => true).where("distance >= :distcomp AND pace < :pacecomp", distcomp: 5, pacecomp: 8)
 
     render json: @run_records
   end
 
   # GET /run_records/1
   def show
-    render json: @run_record
+    if @run_record[:finished] == true and @run_record[:pace] <8 and @run_record[:distance] >= 5 then render json: @run_record
+    end
   end
 
   # POST /run_records
@@ -33,13 +35,17 @@ class RunRecordsController < ApplicationController
     else
       params[:run_record][:distance] = params[:run_record][:distance].to_f
     end
-    p params[:run_record][:distance].to_f
+    
     if params[:run_record][:time].to_f == 0.0
       params[:run_record][:time] = @run_record.time
     else
       params[:run_record][:time] = params[:run_record][:time].to_f
     end
-    p params[:run_record][:time].to_f
+
+    if params[:run_record][:finished].nil?
+      params[:run_record][:time] = @run_record.finished
+    end
+
     params[:run_record][:pace] = (params[:run_record][:time]/params[:run_record][:distance]).round(2)
 
     if @run_record.update(params.require(:run_record).permit(:distance, :time, :pace, :finished))
@@ -69,6 +75,6 @@ class RunRecordsController < ApplicationController
       end
 
       params[:run_record].require([:date, :difficulty, :distance, :time])
-      params.require(:run_record).permit(:user_id, :date, :difficulty, :distance, :time, :notes)
+      params.require(:run_record).permit(:user_id, :date, :difficulty, :distance, :time, :notes, :finished)
     end
 end
