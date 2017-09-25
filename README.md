@@ -365,6 +365,14 @@ Briefly, how did you approach this problem and create the table?  Did you genera
 
 **---Your Answer Start---**
 
+This was covered in my results for Question #1. I added this line to my `run_records_controller.rb`:
+
+  ```ruby
+  @run_record.pace = (@run_record.time/@run_record.distance).round(2)
+  ```
+
+This creates a value for `pace` from `time` and `distance`. Because I do this in the controller, `time` has to be validated in the controller stage, or else a "divided by nil" error will occur. To keep things consistent, I validated the presence/absence of all input variables in the controller stage and validated their values (see Question #3) in the model stage.
+
 **---Your Answer End---**
 
 **--------------------------------------------------**
@@ -377,6 +385,65 @@ We realized that calculating the pace and storing the value creates a problem if
 Briefly, how did you approach this problem and create the table?  Did you generate code using the command line?  If so, copy and past the copy in the space below:
 
 **---Your Answer Start---**
+
+I changed the `update` method in `run_records_controller.rb` to reflect the following:
+
+  ```ruby
+  def update
+    @run_record = RunRecord.find(params[:id])
+    if params[:run_record][:distance].to_f == 0.0
+      params[:run_record][:distance] = @run_record.distance
+    else
+      params[:run_record][:distance] = params[:run_record][:distance].to_f
+    end
+    
+    if params[:run_record][:time].to_f == 0.0
+      params[:run_record][:time] = @run_record.time
+    else
+      params[:run_record][:time] = params[:run_record][:time].to_f
+    end
+
+    params[:run_record][:pace] = (params[:run_record][:time]/params[:run_record][:distance]).round(2)
+
+    if @run_record.update(params.require(:run_record).permit(:distance, :time, :pace))
+      render json: @run_record
+    else
+      render json: @run_record.errors, status: :unprocessable_entity
+    end
+  end
+  ```
+
+The line `@run_record = RunRecord.find(params[:id])` selects the record indicated by the supplied `ID` value.
+
+The conditionals are present so that if the user chooses not to update `distance` or `time` or both, then the previous value will be used for the appropriate un-updated variable(s).
+
+`params[:run_record][:pace] = (params[:run_record][:time]/params[:run_record][:distance]).round(2)` calculates a new key in `params` called `pace` from the values of `time` and `distance`.
+
+Since the user is only updating `time` and `distance`, if the other inputs are `nil`, Rails will throw an error. Thus, I had to permit only the parameters that have been imputed/modified for this particular update using this `params.require(:run_record).permit(:distance, :time, :pace)`.
+
+To test, I added `update-run_record.sh` to the scripts folder:
+
+  ```bash
+  #!/bin/bash
+
+  API="${API_ORIGIN:-http://localhost:4741}"
+  URL_PATH="/run_records"
+  curl "${API}${URL_PATH}/${ID}" \
+    --include \
+    --request PATCH \
+    --header "Authorization: Token token=${TOKEN}" \
+    --header "Content-Type: application/json" \
+    --data '{
+      "run_record": {
+        "distance": "'"${DISTANCE}"'",
+        "time": "'"${TIME}"'"
+      }
+    }'
+
+  echo
+  ```
+
+I tested different combinations of `distance` and `time`. The code ran appropriately.
 
 **---Your Answer End---**
 

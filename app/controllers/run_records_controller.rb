@@ -27,7 +27,22 @@ class RunRecordsController < ApplicationController
 
   # PATCH/PUT /run_records/1
   def update
-    if @run_record.update(run_record_params)
+    @run_record = RunRecord.find(params[:id])
+    if params[:run_record][:distance].to_f == 0.0
+      params[:run_record][:distance] = @run_record.distance
+    else
+      params[:run_record][:distance] = params[:run_record][:distance].to_f
+    end
+    p params[:run_record][:distance].to_f
+    if params[:run_record][:time].to_f == 0.0
+      params[:run_record][:time] = @run_record.time
+    else
+      params[:run_record][:time] = params[:run_record][:time].to_f
+    end
+    p params[:run_record][:time].to_f
+    params[:run_record][:pace] = (params[:run_record][:time]/params[:run_record][:distance]).round(2)
+
+    if @run_record.update(params.require(:run_record).permit(:distance, :time, :pace, :finished))
       render json: @run_record
     else
       render json: @run_record.errors, status: :unprocessable_entity
