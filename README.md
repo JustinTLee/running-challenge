@@ -165,6 +165,78 @@ Briefly, how did you approach this problem and create the table?  Did you genera
 
 **---Your Answer Start---**
 
+First, I generated a scaffold of the RunRecord controller:
+
+  ```shell
+  bin/rails generate scaffold RunRecord user:references date:date difficulty:integer distance:float time:float pace:float notes:string
+  ```
+
+Opening up app/controllers/run_records_controller.rb, I added the following line under the instantiation of the RunRecord object:
+
+  ```ruby
+  @run_record.pace = (@run_record.time/@run_record.distance).round(2)
+  ```
+
+This generates a value for `pace`.
+
+
+To permit certain parameters, I also modified the private `run_record_params` method:
+
+  ```ruby
+  params.require(:run_record).permit(:date, :difficulty, :distance, :time, :notes)
+  ```
+
+In this case, I removed the `:pace` key from `run_record`.
+
+I created a new shell script (`scripts/create-run_record.sh`) with the following text:
+
+  ```shell
+  #!/bin/bash
+
+  API="${API_ORIGIN:-http://localhost:4741}"
+  URL_PATH="/run_records"
+  curl "${API}${URL_PATH}" \
+    --include \
+    --request POST \
+    --header "Content-Type: application/json" \
+    --header "Authorization: Token token=$TOKEN" \
+    --data '{
+      "run_record": {
+        "user_id": "'"${USER}"'",
+        "date": "'"${DATE}"'",
+        "difficulty": "'"${DIFFICULTY}"'",
+        "distance": "'"${DISTANCE}"'",
+        "time": "'"${TIME}"'",
+        "pace": "'"${PACE}"'",
+        "notes": "'"${NOTES}"'"
+      }
+    }'
+
+  echo
+  ```
+
+Going back to the command line, I typed:
+
+  ```shell
+  TOKEN=my_token USER=1 DATE=2017-09-24 DIFFICULTY=4 DISTANCE=1.5 TIME=15 PACE=9 NOTES="No notes for this day" sh scripts/create-run_record.sh
+  ```
+
+I added a PACE value just to test and make sure that the .permit method was working properly.
+
+On the server shell, I get a message:
+
+  ```shell
+  Unpermitted parameter: pace
+  ```
+
+which tells me my `.permit` method is working. In the shell, I also get the following output as a result of my curl request:
+
+  ```shell
+  {"run_record":{"id":1,"date":"2017-09-24","difficulty":4,"distance":1.5,"time":15.0,"pace":10.0,"notes":"No notes for this day","user":{"id":1,"email":"Z@Z"}}}
+  ```
+
+This tells me that what I entered has been recorded in the database. The `ID` parameter tells me the record number for this particular user in the database. The user information tells me that this record has been associated with the correct user. Notice how the `pace` parameter is different from the value that I put in. This indicates that the supplied `pace` parameter was rejected appropriately and that the controller was able to calculate the value based on `distance` and `time`.
+
 **---Your Answer End---**
 
 **--------------------------------------------------**
