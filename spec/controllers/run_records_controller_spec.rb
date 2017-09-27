@@ -24,17 +24,24 @@ RSpec.describe RunRecordsController, type: :controller do
   # RunRecord. As you add validations to RunRecord, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    # skip("Add a hash of attributes valid for your model")
+    { "date" => "2017-05-13", "difficulty" => "5", "distance" => "6", "finished" => "true", "time" => "45", "pace" => "4", "user_id" => "1" }
   }
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+  let(:valid_attributes_nopace) {
+    # skip("Add a hash of attributes valid for your model")
+    { "date" => "2017-05-13", "difficulty" => "5", "distance" => "6", "finished" => "true", "time" => "45", "user_id" => "1" }
+  }
+
+  let(:invalid_attributes_nopace) {
+    # skip("Add a hash of attributes invalid for your model")
+    { "date" => "2030-05-13", "difficulty" => "26", "distance" => "6", "finished" => "false", "time" => "45", "user_id" => "1" }
   }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # RunRecordsController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
+  let(:valid_session) { {"id" => "1"} }
 
   describe "GET #index" do
     it "assigns all run_records as @run_records" do
@@ -52,49 +59,49 @@ RSpec.describe RunRecordsController, type: :controller do
     end
   end
 
-  describe "GET #new" do
-    it "assigns a new run_record as @run_record" do
-      get :new, params: {}, session: valid_session
-      expect(assigns(:run_record)).to be_a_new(RunRecord)
-    end
-  end
+  # describe "GET #new" do
+  #   it "assigns a new run_record as @run_record" do
+  #     get :new, params: {}, session: valid_session
+  #     expect(assigns(:run_record)).to be_a_new(RunRecord)
+  #   end
+  # end
 
-  describe "GET #edit" do
-    it "assigns the requested run_record as @run_record" do
-      run_record = RunRecord.create! valid_attributes
-      get :edit, params: {id: run_record.to_param}, session: valid_session
-      expect(assigns(:run_record)).to eq(run_record)
-    end
-  end
+  # describe "GET #edit" do
+  #   it "assigns the requested run_record as @run_record" do
+  #     run_record = RunRecord.create! valid_attributes
+  #     get :edit, params: {id: run_record.to_param}, session: valid_session
+  #     expect(assigns(:run_record)).to eq(run_record)
+  #   end
+  # end
 
   describe "POST #create" do
     context "with valid params" do
       it "creates a new RunRecord" do
         expect {
-          post :create, params: {run_record: valid_attributes}, session: valid_session
+          post :create, params: {run_record: valid_attributes_nopace}, session: valid_session
         }.to change(RunRecord, :count).by(1)
       end
 
       it "assigns a newly created run_record as @run_record" do
-        post :create, params: {run_record: valid_attributes}, session: valid_session
+        post :create, params: {run_record: valid_attributes_nopace}, session: valid_session
         expect(assigns(:run_record)).to be_a(RunRecord)
         expect(assigns(:run_record)).to be_persisted
       end
 
       it "redirects to the created run_record" do
-        post :create, params: {run_record: valid_attributes}, session: valid_session
+        post :create, params: {run_record: valid_attributes_nopace}, session: valid_session
         expect(response).to redirect_to(RunRecord.last)
       end
     end
 
     context "with invalid params" do
       it "assigns a newly created but unsaved run_record as @run_record" do
-        post :create, params: {run_record: invalid_attributes}, session: valid_session
+        post :create, params: {run_record: invalid_attributes_nopace}, session: valid_session
         expect(assigns(:run_record)).to be_a_new(RunRecord)
       end
 
       it "re-renders the 'new' template" do
-        post :create, params: {run_record: invalid_attributes}, session: valid_session
+        post :create, params: {run_record: invalid_attributes_nopace}, session: valid_session
         expect(response).to render_template("new")
       end
     end
@@ -103,14 +110,16 @@ RSpec.describe RunRecordsController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        # skip("Add a hash of attributes valid for your model")
+        { "distance" => "100", "time" => "20", "finished" => "true" }
       }
 
       it "updates the requested run_record" do
         run_record = RunRecord.create! valid_attributes
         put :update, params: {id: run_record.to_param, run_record: new_attributes}, session: valid_session
         run_record.reload
-        skip("Add assertions for updated state")
+        # skip("Add assertions for updated state")
+        expect(assigns(:run_record)).to eq(run_record)
       end
 
       it "assigns the requested run_record as @run_record" do
@@ -129,7 +138,7 @@ RSpec.describe RunRecordsController, type: :controller do
     context "with invalid params" do
       it "assigns the run_record as @run_record" do
         run_record = RunRecord.create! valid_attributes
-        put :update, params: {id: run_record.to_param, run_record: invalid_attributes}, session: valid_session
+        put :update, params: {id: run_record.to_param, run_record: invalid_attributes_nopace}, session: valid_session
         expect(assigns(:run_record)).to eq(run_record)
       end
 
