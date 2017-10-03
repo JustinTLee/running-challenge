@@ -59,21 +59,6 @@ RSpec.describe RunRecordsController, type: :controller do
     end
   end
 
-  # describe "GET #new" do
-  #   it "assigns a new run_record as @run_record" do
-  #     get :new, params: {}, session: valid_session
-  #     expect(assigns(:run_record)).to be_a_new(RunRecord)
-  #   end
-  # end
-
-  # describe "GET #edit" do
-  #   it "assigns the requested run_record as @run_record" do
-  #     run_record = RunRecord.create! valid_attributes
-  #     get :edit, params: {id: run_record.to_param}, session: valid_session
-  #     expect(assigns(:run_record)).to eq(run_record)
-  #   end
-  # end
-
   describe "POST #create" do
     context "with valid params" do
       it "creates a new RunRecord" do
@@ -98,11 +83,6 @@ RSpec.describe RunRecordsController, type: :controller do
       it "assigns a newly created but unsaved run_record as @run_record" do
         post :create, params: {run_record: invalid_attributes_nopace}, session: valid_session
         expect(assigns(:run_record)).to be_a_new(RunRecord)
-      end
-
-      it "re-renders the 'new' template" do
-        post :create, params: {run_record: invalid_attributes_nopace}, session: valid_session
-        expect(response).to render_template("new")
       end
     end
   end
@@ -140,12 +120,6 @@ RSpec.describe RunRecordsController, type: :controller do
         run_record = RunRecord.create! valid_attributes
         put :update, params: {id: run_record.to_param, run_record: invalid_attributes_nopace}, session: valid_session
         expect(assigns(:run_record)).to eq(run_record)
-      end
-
-      it "re-renders the 'edit' template" do
-        run_record = RunRecord.create! valid_attributes
-        put :update, params: {id: run_record.to_param, run_record: invalid_attributes}, session: valid_session
-        expect(response).to render_template("edit")
       end
     end
   end
